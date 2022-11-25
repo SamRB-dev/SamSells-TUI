@@ -1,0 +1,1 @@
+# A project to experiment with **Terminal User Interface (TUI)** using **Rich** library in **python**
