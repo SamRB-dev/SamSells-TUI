@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <inventory>
+        <product 
+            id="1"
+            category="pens"
+            name='Matador I-Teen'
+            quantity='40'
+            price='10'
+        ></product>
+
+        <product id='2' category="notebooks"
+            name="Lincon's Notebook"
+            quantity='70'
+            price='60'
+        ></product>
+        
+        <product id='3' category='geometrybox'
+            name='Camlin Geometry Box'
+            quantity='55'
+            price='250'
+        ></product>
+    </inventory>

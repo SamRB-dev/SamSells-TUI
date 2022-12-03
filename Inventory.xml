@@ -1,20 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-    <inventory>
-        <product category="pens"
-            name='Matador I-Teen'
-            quantity='40'
-            price='10'
-        ></product>
-
-        <product category="notebooks"
-            name="Lincon's Notebook"
-            quantity='70'
-            price='60'
-        ></product>
-        
-        <product category='geometrybox'
-            name='Camlin Geometry Box'
-            quantity='55'
-            price='250'
-        ></product>
-    </inventory>
+<inventory>
+    <product id="1" category="pens" name="Matador I-Teen" quantity="40" price="10" />
+    <product id="2" category="notebook" name="Lincon's Notebook" quantity="70" price="60" />    
+    <product id="3" category="geometrybox" name="Camlin Geometry Box" quantity="55" price="250" />
+    <product id="4" category="notebook" name="Matador's Notebook" quantity="75" price="200" />
+    <product id="5" category="unkown" name="genix stepler" quantity="10" price="20" />
+    <product id="6" category="stationary" name="compass" quantity="3" price="100" />
+</inventory>

@@ -1,18 +1,18 @@
-# from xml.dom import minidom
-# xml = minidom.parse('Inventory.xml')
-# products = xml.getElementsByTagName('product')
-# for product in products:
-# 	category = product.attributes['category'].value
-# 	name = product.attributes['name'].value
-# 	quantity = product.attributes['quantity'].value
-# 	price = product.attributes['price'].value
-# 	print(f"{name} {category} {quantity} ${price}")
-from rich import print
-from rich.console import Group
-from rich.panel import Panel
+import xml.etree.ElementTree as ET
 
-panel_group = Group(
-    Panel("Hello", style="on blue"),
-    Panel("World", style="on red"),
-)
-print(Panel(panel_group))
+# Add Item
+xml = ET.parse("Inventory.xml")
+root = xml.getroot()
+# new = ET.SubElement(root,"product")
+# new.set("id",'4')
+# new.set("category","notebook")
+# new.set("name","Matador's Notebook")
+# new.set("quantity","75")
+# new.set("price","200")
+# ET.ElementTree(root).write("Inventory.xml")
+
+# Search
+for item in root.iter('product'):
+    category = item.get("category")
+    if category == "notebook":
+        print(category.capitalize())
