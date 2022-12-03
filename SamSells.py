@@ -20,18 +20,22 @@ import datetime
 '''
 class SamSells:
 	def __init__(self):
+		'''
+		[bright_green]Github[/bright_green]:
+		'''
 		self.console = Console()
 		self.OS = platform.system()
 		self.XML = "Inventory.xml"
+		self.GITHUB = "https://github.com/SamRB-dev/SamSells-TUI"
 		self.XMLWrite = ET.parse(self.XML)
 		self.Cross = ":cross_mark:"
 		self.CheckMark = ":white_check_mark:"
-		self.banner = """		                    
+		self.Info = ":information:"
+		self.banner = f"""		                    
 _____           _____     _ _     
     |   __|___ _____|   __|___| | |___ 
     |__   | .'|     |__   | -_| | |_ -|
     |_____|__,|_|_|_|_____|___|_|_|___|
-	[bright_green]TUI[/bright_green] By [dark_violet]Sadim Rahman Badhan[/dark_violet]
 """
 		self.ID = None
 
@@ -49,7 +53,7 @@ _____           _____     _ _
 			[blue][3][/blue] [dark_violet]Sells[/dark_violet]
 			[blue][4][/blue] [dark_violet]Exit[/dark_violet]
 		"""
-		self.console.print(Panel(menu,title="Menu"))
+		self.console.print(Panel(menu,title="Menu",subtitle=self.GITHUB))
 		
 	def __InventoryMenu(self) -> None:
 		menu = f"""
@@ -60,7 +64,7 @@ _____           _____     _ _
 		"""
 		self.__ScrnClear()
 		self.__Banner()
-		self.console.print(Panel(menu,title='Inventory'))
+		self.console.print(Panel(menu,title='Inventory',subtitle=self.GITHUB))
 	
 	def __ShowInventory(self):
 		# Variables
@@ -99,7 +103,7 @@ _____           _____     _ _
 
 		# Creating layout
 		layout.split_column(
-			Layout(Panel(self.banner),size=10),
+			Layout(Panel(self.banner,subtitle=self.GITHUB),size=10),
 			Layout(name='Main'),
 		)
 
@@ -127,6 +131,18 @@ _____           _____     _ _
 		ET.ElementTree(root).write(self.XML)
 		self.console.print(f"{self.CheckMark} [blue]Item Has Been Stocked[/blue]")
 
+	def __Change(self,n): #Greedy
+		changes = [1,2,5,10,20,50,100,200,500,1000]
+		size = len(changes)
+		notes = []
+		i = size - 1
+		while (i >= 0):
+			while(n >= changes[i]):
+				n -= changes[i]
+				notes.append(changes[i])
+			i -= 1
+		self.console.print(f"{self.CheckMark} [blue]Notes[/blue]: [dark_violet]{notes}[/dark_violet]")
+
 	def __SearchItems(self):
 		self.console.print(self.banner,justify='center')
 		category = Prompt.ask("Search Category",default='notebook')
@@ -151,8 +167,47 @@ _____           _____     _ _
 		self.console.print(table)
 
 	def __Sells(self):
-		self.console.print(self.banner,justify='center')
-		
+		total = 0
+		root = self.XMLWrite.getroot()
+
+		# Table
+		table = Table(title='Products',highlight=True,expand=True)
+		table.add_column("id",style='blue',justify='center')
+		table.add_column("Product",style='blue',justify='center')
+		table.add_column("Category",justify='center')
+		table.add_column("In Stock",justify='center')
+		table.add_column("Price",justify='center',style='#af00d7 bold')
+
+		# Products
+		root = self.XMLWrite.getroot()
+		for item in root.iter('product'):
+			itemct = item.get('category')
+			proid = item.get("id")
+			name = item.get("name")
+			stock = item.get("quantity")
+			price = item.get("price")
+			table.add_row(proid,name,itemct,stock,price)
+		self.console.print(table)
+
+		# Main calc
+		items = Prompt.ask(f"{self.Info} Total Items")
+		for i in range(int(items)):
+			pid = Prompt.ask(f"{self.Info} Product ID")
+			for itm in root.iter('product'):
+				itmid = itm.get("id")
+				if itmid == pid:
+					self.console.print(f"{self.CheckMark} [dark_violet]Item Found[/dark_violet]")
+					price = itm.get("price")
+					total += int(price)
+				else:
+					continue
+		# Print
+		self.console.print(f"[dark_violet]Total[/dark_violet]: [blue]{total}[/blue]")
+		amount = int(Prompt.ask(f"{self.Info} Amount Given"))
+		change = total - amount if (total > amount) else (amount - total)
+		self.console.print(f"{self.Info} Change: [dark_violet]{change}[/dark_violet]")
+		self.__Change(change)
+
 	def App(self):
 		while True:
 			try:
@@ -184,6 +239,7 @@ _____           _____     _ _
 				elif opt == 3:
 					self.__ScrnClear()
 					self.__Banner()
+					self.__Sells()
 					cntnue = Prompt.ask("Continue ?",choices=['yes','no'],default='yes')
 					if cntnue == 'no':
 						break
