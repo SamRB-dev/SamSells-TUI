@@ -14,9 +14,7 @@ import datetime
 '''
 	Features:
 		1. Inventories > Add items > show items > search.
-		2. Sales history
 		3. make sales
-		4. Export Sales History
 '''
 class SamSells:
 	def __init__(self):
@@ -59,7 +57,7 @@ _____           _____     _ _
 		menu = f"""
 			[blue][1][/blue] [dark_violet]Products[/dark_violet]
 			[blue][2][/blue] [dark_violet]New Stocks[/dark_violet]
-			[blue][3][/blue] [dark_violet]Remove Stocks[/dark_violet] {self.Cross}
+			[blue][3][/blue] [dark_violet]Remove Stocks[/dark_violet] 
 			[blue][4][/blue] [dark_violet]Search Items[/dark_violet]
 		"""
 		self.__ScrnClear()
@@ -121,14 +119,14 @@ _____           _____     _ _
 		price = Prompt.ask("Price")
 
 		# Adding to the xml
-		root = self.XMLWrite.getroot()
-		node = ET.SubElement(root,"product")
-		node.set("id",str(int(self.ID)+1))
-		node.set("category",category)
-		node.set("name",name)
-		node.set("quantity",str(quantity))
-		node.set("price",str(price))
-		ET.ElementTree(root).write(self.XML)
+		root = self.XMLWrite.getroot() # XML function
+		node = ET.SubElement(root,"product") # For Adding Subnode
+		node.set("id",str(int(self.ID)+1)) # Setting the id attribute
+		node.set("category",category) # Setting the attribute
+		node.set("name",name) # Setting the attribute
+		node.set("quantity",str(quantity)) # Setting the attribute
+		node.set("price",str(price)) # Setting the attribute
+		ET.ElementTree(root).write(self.XML) # For Saving the subnode in xml
 		self.console.print(f"{self.CheckMark} [blue]Item Has Been Stocked[/blue]")
 
 	def __Change(self,n): #Greedy
@@ -202,11 +200,42 @@ _____           _____     _ _
 				else:
 					continue
 		# Print
-		self.console.print(f"[dark_violet]Total[/dark_violet]: [blue]{total}[/blue]")
+		self.console.print(f"[dark_violet]Total Price[/dark_violet]: [blue]{total}[/blue]")
 		amount = int(Prompt.ask(f"{self.Info} Amount Given"))
 		change = total - amount if (total > amount) else (amount - total)
 		self.console.print(f"{self.Info} Change: [dark_violet]{change}[/dark_violet]")
 		self.__Change(change)
+
+	def __RemoveItems(self):
+		root = self.XMLWrite.getroot()
+		# Table
+		table = Table(title='Products',highlight=True,expand=True)
+		table.add_column("id",style='blue',justify='center')
+		table.add_column("Product",style='blue',justify='center')
+		table.add_column("Category",justify='center')
+		table.add_column("In Stock",justify='center')
+		table.add_column("Price",justify='center',style='#af00d7 bold')
+		# Products
+		root = self.XMLWrite.getroot()
+		for item in root.iter('product'):
+			itemct = item.get('category')
+			proid = item.get("id")
+			name = item.get("name")
+			stock = item.get("quantity")
+			price = item.get("price")
+			table.add_row(proid,name,itemct,stock,price)
+		self.console.print(table)
+
+		# Deleting the node from XML
+		pid = Prompt.ask("Product ID")
+		for item in root.iter('product'):
+			# Matching if the pid == xpid
+			xpid = item.get("id")
+			if (pid == xpid):
+				root.remove(item)
+				ET.ElementTree(root).write(self.XML)
+				self.console.print("[dark_violet]ITEM HAS BEEN DELETED[/dark_violet]")
+				break
 
 	def App(self):
 		while True:
@@ -227,6 +256,12 @@ _____           _____     _ _
 					elif optinv == 2: 
 						self.__ScrnClear()
 						self.__AddItem()
+						cntnue = Prompt.ask("Continue ?",choices=['yes','no'],default='yes')
+						if cntnue == 'no':
+							break
+					elif optinv == 3:
+						self.__ScrnClear()
+						self.__RemoveItems()
 						cntnue = Prompt.ask("Continue ?",choices=['yes','no'],default='yes')
 						if cntnue == 'no':
 							break
